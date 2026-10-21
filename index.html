@@ -324,6 +324,7 @@
             <label for="message">What do you need?</label>
             <textarea id="message" name="message" placeholder="e.g. Add a mini-split to my 2-car garage, or whole-home multi-zone quote"></textarea>
           </div>
+          <div class="cf-turnstile" data-sitekey="0x4AAAAAAFe_0xbOKrC5E4B1" data-action="lead" data-appearance="interaction-only"></div>
           <button class="btn btn-primary" type="submit">Request My Free Quote</button>
           <p class="form-note">By submitting, you agree to be contacted about your project. We connect you with licensed local installers serving the Lansing area.</p>
         </form>
@@ -381,6 +382,7 @@
   Get a Free Quote
 </a>
 
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 <script>document.getElementById('yr').textContent=new Date().getFullYear();</script>
 <script>
 /* Lead form -> relicops LEADS CRM (cross-origin, CORS-allowed for this domain).
@@ -401,7 +403,8 @@
       phone: get('phone'),
       email: get('email'),
       note: get('message') + (zip ? ('\n[ZIP: ' + zip + ']') : ''),
-      source: 'lansingminisplit.com'
+      source: 'lansingminisplit.com',
+      'cf-turnstile-response': get('cf-turnstile-response')
     };
     if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
     fetch('https://relicops.com/api/lead', {
@@ -416,6 +419,7 @@
       })
       .catch(function(){
         if(btn){ btn.disabled = false; btn.textContent = 'Request My Free Quote'; }
+        if(window.turnstile){ try{ window.turnstile.reset(form.querySelector('.cf-turnstile')); }catch(e){} }
         note('Something went wrong sending your request - please try again in a moment.', true);
       });
   });
